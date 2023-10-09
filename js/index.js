@@ -3,7 +3,6 @@ var resetButton = document.querySelector("#reset");
 
 // Adding onClick event listener
 resetButton.addEventListener("click", () => {
-    visitCount = 1;
-    //localStorage.setItem("page_view", 1);
+    visitCount = 1;    
     visitCounterElmt.innerHTML = visitCount;
 });
