@@ -1,22 +1,45 @@
-document.addEventListener("DOMContentLoaded", getVisitorCount);
+document.addEventListener("DOMContentLoaded", updateVisitCounterElmtInnerHtml);
 
 async function getVisitorCount(){
-    // select the element to update
-    var visitCounterElmt = document.querySelector("#visit-count");
-
-    // fetch the data from the database
+    // define the API endpoint
     const apiEndpoint = new URL("https://3ijz5acnoe.execute-api.ap-northeast-1.amazonaws.com/dev/counts/6632d5b4-5655-4c48-b7b6-071d5823c888?func=addOneVisitorCount");
-    const apiResponse = await fetch(apiEndpoint, {
-        method: "GET",
-    });
+    
+    // fetch the data from the database
+    try {
+        const apiResponse = await fetch(apiEndpoint, {
+            method: "GET",
+        });
+        if (!apiResponse.ok) {
+            let errorTitle = `Fetch error (${apiResponse.status})` 
+            throw new Error(errorTitle);
+        }
+        
+        // set default value if API failed
+        if (apiResponse.status === 400) {
+            output = "(under development)"
+        }
 
-    // back to default if connection to API failed
-    if (apiResponse.status === 400) {
-        visitCounterElmt.innerHTML = "(under development)"
-        return
+        // set the value to output variable
+        const data = await apiResponse.json();
+        return data;
+    } 
+    catch(error) {
+        console.error("There has been a problem with the fetch operation:", error);
+        throw error
     }
     
-    // retrieve the data
-    const responseData = await apiResponse.json();    
-    visitCounterElmt.innerHTML = responseData;
+}
+
+function updateVisitCounterElmtInnerHtml(){
+    // select the element to update
+    var visitCounterElmt = document.querySelector("#visit-count");
+    getVisitorCount()
+    .then(
+        response => {
+            visitCounterElmt.innerHTML = response
+        },
+        errorResponse => {
+            visitCounterElmt.innerHTML = "(under development)"
+        }
+    )
 }
