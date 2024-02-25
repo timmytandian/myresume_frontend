@@ -14,11 +14,6 @@ async function getVisitorCount(){
             throw new Error(errorTitle);
         }
         
-        // set default value if API failed
-        if (apiResponse.status === 400) {
-            output = "(under development)"
-        }
-
         // set the value to output variable
         const data = await apiResponse.json();
         return data;
@@ -43,3 +38,5 @@ function updateVisitCounterElmtInnerHtml(){
         }
     )
 }
+
+export {getVisitorCount};
