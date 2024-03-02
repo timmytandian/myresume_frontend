@@ -8,5 +8,8 @@
   "scripts": {
     "test": "jest"
   },
-  "test": "NODE_OPTIONS='--experimental-vm-modules --experimental-specifier-resolution=node' jest"
+  "test": "NODE_OPTIONS='--experimental-vm-modules --experimental-specifier-resolution=node' jest",
+  "dependencies": {
+    "isomorphic-fetch": "^3.0.0"
+  }
 }
