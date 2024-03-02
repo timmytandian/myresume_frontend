@@ -10,7 +10,7 @@ async function getVisitorCount(){
             method: "GET",
         });
         if (!apiResponse.ok) {
-            let errorTitle = `Fetch error (${apiResponse.status})` 
+            let errorTitle = `Fetch API response not OK (status ${apiResponse.status})` 
             throw new Error(errorTitle);
         }
         
@@ -19,7 +19,8 @@ async function getVisitorCount(){
         return data;
     } 
     catch(error) {
-        console.error("There has been a problem with the fetch operation:", error);
+        // log the error to console
+        console.error(error);
         throw error
     }
     
