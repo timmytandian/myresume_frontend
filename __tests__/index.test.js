@@ -1,12 +1,12 @@
-test("Sanity check", () => {
-    expect(true).toBe(true);
-});
+/**
+ * @jest-environment jsdom
+ */
 
-import { getVisitorCount } from "../index.js";
+import { getVisitorCount } from "../js/index.js";
 
 global.fetch = jest.fn(() =>
     Promise.resolve({
-        json: () => Promise.resolve({ body: "229" })
+        json: () => Promise.resolve({ body: 229 })
     })
 );
 
@@ -16,8 +16,8 @@ beforeEach(() => {
   
 
 it("get visitor count", async () => {
-    const rate = await getVisitorCount();
+    const visitorCount = await getVisitorCount();
 
-    expect(rate).toEqual(1.42);
+    expect(visitorCount).toEqual(229);
     expect(fetch).toHaveBeenCalledTimes(1);
 });
