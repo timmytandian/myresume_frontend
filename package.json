@@ -1,10 +1,12 @@
 {
   "devDependencies": {
+    "@babel/plugin-transform-modules-commonjs": "^7.23.3",
     "@types/jest": "^29.5.12",
-    "jest": "^29.7.0"
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0"
   },
-
   "scripts": {
     "test": "jest"
-  }
+  },
+  "test": "NODE_OPTIONS='--experimental-vm-modules --experimental-specifier-resolution=node' jest"
 }
