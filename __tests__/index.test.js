@@ -3,7 +3,7 @@
  */
 
 import 'isomorphic-fetch'; // fetch API may not be implemented yet in the test environment, so import this
-import { getVisitorCount } from "../js/index.js";
+import { getVisitorCount } from "../src/js/index.js";
 
 // This is the section where we mock `fetch` API
 const fetchMock = jest
