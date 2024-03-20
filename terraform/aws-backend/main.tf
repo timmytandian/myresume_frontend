@@ -4,13 +4,13 @@ terraform {
   ## YOU WILL UNCOMMENT THIS CODE THEN RERUN TERRAFORM INIT
   ## TO SWITCH FROM LOCAL BACKEND TO REMOTE AWS BACKEND
   #############################################################
-  # backend "s3" {
-  #   bucket         = "terraform-cloudresume-tfstate" # REPLACE WITH YOUR BUCKET NAME
-  #   key            = "frontend/dev_src/terraform.tfstate"
-  #   region         = "ap-northeast-1"
-  #   dynamodb_table = "terraform-cloudresume-state-locking"
-  #   encrypt        = true
-  # }
+  backend "s3" {
+    bucket         = "terraform-cloudresume-tfstate" # REPLACE WITH YOUR BUCKET NAME
+    key            = "frontend/dev_src/terraform.tfstate"
+    region         = "ap-northeast-1"
+    dynamodb_table = "terraform-cloudresume-state-locking"
+    encrypt        = true
+  }
 
   required_providers {
     aws = {
