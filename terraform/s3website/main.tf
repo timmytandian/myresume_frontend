@@ -19,18 +19,8 @@ provider "aws" {
   region = var.region
 }
 
-# Recursive upload of multiple files. Reference:
-# https://acode.ninja/posts/recursive-file-upload-to-s3-in-terraform/
-
 resource "aws_s3_bucket" "tf_resume_timmytandian" {
   bucket  = "tf-resume.timmytandian.com"
-
-  #website {
-  #  index_document = "index.html"
-  #  error_document = "error.html"
-  #}
-  # The acl and website keywords below have been depreceated. 
-  # See here to troubleshoot: https://discuss.hashicorp.com/t/handling-aws-s3-bucket-acl-deprecation/42288
 }
 
 resource "aws_s3_bucket_public_access_block" "tf_resume_timmytandian" {
