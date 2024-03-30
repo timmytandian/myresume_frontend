@@ -5,7 +5,7 @@ terraform {
   ## TO SWITCH FROM LOCAL BACKEND TO REMOTE AWS BACKEND
   #############################################################
   backend "s3" {
-    bucket         = "terraform-cloudresume-tfstate" # REPLACE WITH YOUR BUCKET NAME
+    bucket         = "terraform-tfstate-cloudresume" # REPLACE WITH YOUR BUCKET NAME
     key            = "import-bootstrap/terraform.tfstate"
     region         = "ap-northeast-1"
     dynamodb_table = "terraform-cloudresume-state-locking"
@@ -25,7 +25,7 @@ provider "aws" {
 }
 
 resource "aws_s3_bucket" "terraform_state" {
-  bucket        = "terraform-cloudresume-tfstate" # REPLACE WITH YOUR BUCKET NAME
+  bucket        = "terraform-tfstate-cloudresume" # REPLACE WITH YOUR BUCKET NAME
   force_destroy = true
 }
 
