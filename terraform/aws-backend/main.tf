@@ -6,7 +6,7 @@ terraform {
   #############################################################
   backend "s3" {
     bucket         = "terraform-cloudresume-tfstate" # REPLACE WITH YOUR BUCKET NAME
-    key            = "frontend/dev_src/terraform.tfstate"
+    key            = "import-bootstrap/terraform.tfstate"
     region         = "ap-northeast-1"
     dynamodb_table = "terraform-cloudresume-state-locking"
     encrypt        = true
