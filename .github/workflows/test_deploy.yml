@@ -85,12 +85,146 @@ jobs:
 
       - run: echo "🍏 This job's status is ${{ job.status }}."
   
+  DeployWithTerraform:
+    runs-on: ubuntu-latest
+    needs: Test-and-Build
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+    defaults:
+      run:
+        working-directory: terraform/
+    steps:
+      #----------------------------------------------
+      #  Initial setup and Terraform format check
+      #----------------------------------------------
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.7.5
+          terraform_wrapper: false
+          
+      - name: Terraform Format
+        id: tf_fmt
+        run: terraform fmt -check
+
+      #----------------------------------------------
+      #  Terraform Init
+      #----------------------------------------------
+      - name: tf init
+        id: tf_init
+        run: |
+          if [ -d "environments/$BRANCH_NAME/" ]; then
+            cd environments/$BRANCH_NAME
+            terraform init
+          else
+            for dir in environments/*/
+            do 
+              cd ${dir}   
+              env=${dir%*/}
+              env=${env#*/}
+              echo ""
+              echo "*************** TERRAFORM INIT ******************"
+              echo "***** Running terraform init at environment: ${env} *****"
+              echo "*************************************************"
+              terraform init || exit 1
+              cd ../../
+            done
+          fi
+
+      #----------------------------------------------
+      #  Terraform Plan
+      #----------------------------------------------
+      - name: Terraform Validate
+        id: tf_validate
+        run: terraform validate -no-color
+
+      - name: tf plan
+        id: tf_plan
+        run: |
+          if [ -d "environments/$BRANCH_NAME/" ]; then
+            cd environments/$BRANCH_NAME
+            terraform init
+          else
+            for dir in environments/*/
+            do 
+              cd ${dir}   
+              env=${dir%*/}
+              env=${env#*/}
+              echo ""
+              echo "*************** TERRAFORM INIT ******************"
+              echo "***** Running terraform init at environment: ${env} *****"
+              echo "*************************************************"
+              terraform init || exit 1
+              cd ../../
+            done
+          fi
+
+      #----------------------------------------------
+      #  Github script to to post issue in PR window
+      #----------------------------------------------
+      - uses: actions/github-script@v6
+        if: github.event_name == 'pull_request'
+        env:
+          PLAN: "terraform\n${{ steps.tf_plan.outputs.stdout }}"
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const output = `#### Terraform Format and Style 🖌\`${{ steps.tf_fmt.outcome }}\`
+            #### Terraform Initialization ⚙️\`${{ steps.tf_init.outcome }}\`
+            #### Terraform Validation 🤖\`${{ steps.tf_validate.outcome }}\`
+            <details><summary>Validation Output</summary>
+      
+            \`\`\`\n
+            ${{ steps.tf_validate.outputs.stdout }}
+            \`\`\`
+      
+            </details>
+      
+            #### Terraform Plan 📖\`${{ steps.tf_plan.outcome }}\`
+      
+            <details><summary>Show Plan</summary>
+      
+            \`\`\`\n
+            ${process.env.PLAN}
+            \`\`\`
+      
+            </details>
+      
+            *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`, BRANCH: \`${{ github.ref_name }}\`, Workflow: \`${{ github.workflow }}\`*`;
+      
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: output
+            })
+      
+      #----------------------------------------------
+      #  Terraform Apply
+      #----------------------------------------------
+      - name: Terraform Apply
+        id: tf_apply
+        run: |
+          if [ -d "environments/$BRANCH_NAME/" ]; then
+            cd environments/$BRANCH_NAME
+            terraform apply -auto-approve
+          else
+            echo "***************************** SKIPPING APPLYING *******************************"
+            echo "Branch '$BRANCH_NAME' does not represent an oficial environment." Skip the deployment.
+            echo "*******************************************************************************"
+          fi
+      
   DeployCodeToS3:
+    if: github.repository == 'timmytandian/remove-me-to-execute-this-job'
     runs-on: ubuntu-latest
     needs: Test-and-Build
     steps:
       #----------------------------------------------
-      #  Artifact download, publish to AWS Lambda Layer
+      #  Artifact download, publish to AWS S3
       #----------------------------------------------
       - name: Download the static web artifact
         uses: actions/download-artifact@v4
@@ -104,6 +238,6 @@ jobs:
           aws-region: ap-northeast-1
       - name: Upload web resources to S3
         run: |
-            aws s3 sync . s3://${{ vars.S3_BUCKET }} --delete
+          aws s3 sync . s3://${{ vars.S3_BUCKET }} --delete
       - name: Job status report
         run: echo "🍏 This job's status is ${{ job.status }}."
