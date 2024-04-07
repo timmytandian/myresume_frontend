@@ -117,8 +117,8 @@ jobs:
       - name: tf init
         id: tf_init
         run: |
-          if [ -d "environments/$BRANCH_NAME/" ]; then
-            cd environments/$BRANCH_NAME
+          if [ -d "environments/${{ github.ref_name }}/" ]; then
+            cd environments/${{ github.ref_name }}
             terraform init
           else
             for dir in environments/*/
@@ -145,8 +145,8 @@ jobs:
       - name: tf plan
         id: tf_plan
         run: |
-          if [ -d "environments/$BRANCH_NAME/" ]; then
-            cd environments/$BRANCH_NAME
+          if [ -d "environments/${{ github.ref_name }}/" ]; then
+            cd environments/${{ github.ref_name }}
             terraform init
           else
             for dir in environments/*/
@@ -209,12 +209,12 @@ jobs:
       - name: Terraform Apply
         id: tf_apply
         run: |
-          if [ -d "environments/$BRANCH_NAME/" ]; then
-            cd environments/$BRANCH_NAME
+          if [ -d "environments/${{ github.ref_name }}/" ]; then
+            cd environments/${{ github.ref_name }}
             terraform apply -auto-approve
           else
             echo "***************************** SKIPPING APPLYING *******************************"
-            echo "Branch '$BRANCH_NAME' does not represent an oficial environment." Skip the deployment.
+            echo "Branch '${{ github.ref_name }}' does not represent an oficial environment." Skip the deployment.
             echo "*******************************************************************************"
           fi
       
