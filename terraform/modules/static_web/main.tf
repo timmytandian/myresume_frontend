@@ -1,5 +1,8 @@
 resource "aws_s3_bucket" "main_static_website" {
-  bucket = "${var.env}.${var.website_bucket_name}"
+  # If the environment is prod, set the bucket name to be example.com
+  # If the environemnt is dev, set the bucket name to be dev.example.com
+  bucket = "${var.env == "prod" ? "" : "${var.env}."}${var.website_bucket_name}"
+
 }
 
 resource "aws_s3_bucket_public_access_block" "main_static_website" {
