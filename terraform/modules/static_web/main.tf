@@ -7,6 +7,7 @@ resource "aws_s3_bucket" "main_static_website" {
 
 resource "aws_s3_bucket_versioning" "main_static_website" {
   bucket = aws_s3_bucket.main_static_website.id
+  
   versioning_configuration {
     status = "Enabled"
   }
@@ -14,6 +15,7 @@ resource "aws_s3_bucket_versioning" "main_static_website" {
 
 resource "aws_s3_bucket_server_side_encryption_configuration" "main_static_website" {
   bucket        = aws_s3_bucket.main_static_website.bucket 
+  
   rule {
     apply_server_side_encryption_by_default {
       sse_algorithm = "AES256"
@@ -98,6 +100,7 @@ resource "aws_s3_bucket" "subdomain_www_static_website" {
 
 resource "aws_s3_bucket_versioning" "subdomain_www_static_website" {
   bucket = aws_s3_bucket.subdomain_www_static_website.id
+  
   versioning_configuration {
     status = "Enabled"
   }
@@ -105,6 +108,7 @@ resource "aws_s3_bucket_versioning" "subdomain_www_static_website" {
 
 resource "aws_s3_bucket_server_side_encryption_configuration" "subdomain_www_static_website" {
   bucket        = aws_s3_bucket.subdomain_www_static_website.bucket 
+  
   rule {
     apply_server_side_encryption_by_default {
       sse_algorithm = "AES256"
@@ -134,7 +138,7 @@ resource "aws_s3_bucket_website_configuration" "subdomain_www_static_website" {
   bucket = aws_s3_bucket.subdomain_www_static_website.id
 
   redirect_all_requests_to {
-    host_name = aws_s3_bucket.main_static_website.bucket
+    host_name = aws_s3_bucket_website_configuration.main_static_website.website_endpoint
     protocol = "http"
   }
 }
