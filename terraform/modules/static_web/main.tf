@@ -39,15 +39,6 @@ resource "aws_s3_bucket_website_configuration" "main_static_website" {
   index_document {
     suffix = "index.html"
   }
-
-  #routing_rule {
-  #  condition {
-  #    key_prefix_equals = "docs/"
-  #  }
-  #  redirect {
-  #    replace_key_prefix_with = "documents/"
-  #  }
-  #}
 }
 
 resource "aws_s3_object" "website_files" {
@@ -80,4 +71,39 @@ locals {
     png  = "image/png"
     ico  = "image/vnd.microsoft.icon"
   }
+}
+
+resource "aws_s3_bucket" "subdomain_www_static_website" {
+  # If the environment is prod, set the bucket name to be example.com
+  # If the environemnt is dev, set the bucket name to be dev.example.com
+  bucket = "www.${var.env == "prod" ? "" : "${var.env}."}${var.website_bucket_name}"
+
+}
+
+resource "aws_s3_bucket_public_access_block" "subdomain_www_static_website" {
+  bucket = aws_s3_bucket.subdomain_www_static_website.id
+
+  block_public_acls       = false
+  ignore_public_acls      = false
+  block_public_policy     = false
+  restrict_public_buckets = false
+}
+
+resource "aws_s3_bucket_ownership_controls" "subdomain_www_static_website" {
+  depends_on = [aws_s3_bucket_public_access_block.subdomain_www_static_website]
+  
+  bucket = aws_s3_bucket.subdomain_www_static_website.id
+  rule {
+    object_ownership = "BucketOwnerPreferred"
+  }
+}
+
+resource "aws_s3_bucket_website_configuration" "subdomain_www_static_website" {
+  bucket = aws_s3_bucket.subdomain_www_static_website.id
+
+  redirect_all_requests_to {
+    host_name = aws_s3_bucket.main_static_website.bucket
+    protocol = "http"
+  }
+
 }
