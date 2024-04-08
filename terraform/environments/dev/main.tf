@@ -4,6 +4,14 @@ locals {
 
 provider "aws" {
   region = "ap-northeast-1"
+
+  default_tags {
+    tags = {
+      environment = local.env
+      project = "myresume_frontend"
+      managedBy = "terraform"
+    }
+  }
 }
 
 module "static_web" {
