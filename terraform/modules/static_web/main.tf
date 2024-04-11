@@ -2,7 +2,7 @@ resource "aws_s3_bucket" "main_static_website" {
   # If the environment is prod, set the bucket name to be example.com
   # If the environemnt is dev, set the bucket name to be dev.example.com
   bucket = "${var.env == "prod" ? "" : "${var.env}."}${var.website_bucket_name}"
-
+  force_destroy = true
 }
 
 resource "aws_s3_bucket_versioning" "main_static_website" {
