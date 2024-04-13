@@ -25,6 +25,7 @@ module "cdn" {
   source                            = "../../modules/cdn"
   bucket_regional_domain_name       = module.static_web.main_static_website_regional_domain_name
   website_bucket_name               = module.static_web.main_static_website_name
+  main_website_endpoint             = module.static_web.main_static_website_endpoint
   main_website_bucket_arn           = module.static_web.main_static_website_bucket_arn
   main_website_bucket_id            = module.static_web.main_static_website_bucket_id
   env                               = local.env

@@ -1,3 +1,8 @@
+output "main_static_website_endpoint" {
+  value       = aws_s3_bucket_website_configuration.main_static_website.website_endpoint
+  description = "The WEBSITE ENDPOINT of the main s3 bucket."
+}
+
 output "main_static_website_name" {
   value       = aws_s3_bucket.main_static_website.bucket
   description = "The s3 bucket name that stores the static website resource."

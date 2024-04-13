@@ -8,6 +8,11 @@ variable "bucket_regional_domain_name" {
   type        = string
 }
 
+variable "main_website_endpoint" {
+  description = "The website endpoint of the main s3 bucket to be set as origin domain."
+  type = string
+}
+
 variable "website_bucket_name" {
   description = "The bucket name for the website. This is also become the website name."
   type        = string
