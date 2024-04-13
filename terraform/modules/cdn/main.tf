@@ -18,6 +18,7 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
     viewer_protocol_policy = "redirect-to-https"
   }
 
+  comment = "Simple CDN to distribute my cloud resume in ${var.env} environment. Created by Terraform."
   price_class = "PriceClass_100"
   enabled             = true
   is_ipv6_enabled     = false
