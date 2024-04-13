@@ -1,8 +1,18 @@
 resource "aws_cloudfront_distribution" "s3_distribution" {
   origin {
-    domain_name = var.bucket_regional_domain_name
+    domain_name = var.main_website_endpoint
     origin_id   = "origin-${var.website_bucket_name}"
-    origin_access_control_id = aws_cloudfront_origin_access_control.s3_distribution.id
+    #origin_access_control_id = aws_cloudfront_origin_access_control.s3_distribution.id
+    custom_origin_config {
+      http_port = "80"
+      https_port = "443"
+      origin_protocol_policy = "http-only"
+      origin_ssl_protocols = ["TLSv1.2"]
+    }
+    custom_header {
+      name = "Referer"
+      value = "abRAK4D4br4"
+    }
   }
 
   default_cache_behavior {
