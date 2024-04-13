@@ -25,7 +25,7 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
   #aliases = ["${local.sub_domain}.${data.aws_route53_zone.zone.name}"]
 
   viewer_certificate {
-    cloudfront_default_certificate = false
+    cloudfront_default_certificate = true
     #acm_certificate_arn            = data.aws_acm_certificate.certificate.arn    
     #minimum_protocol_version       = "TLSv1.2_2021"
     #ssl_support_method             = "sni-only"
