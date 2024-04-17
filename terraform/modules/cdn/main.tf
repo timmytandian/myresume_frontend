@@ -11,7 +11,7 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
     }
     custom_header {
       name = "Referer"
-      value = "abRAK4D4br4"
+      value = "${var.referer_custom_header}"
     }
   }
 
@@ -59,23 +59,24 @@ resource "aws_cloudfront_origin_access_control" "s3_distribution" {
 
 data "aws_iam_policy_document" "s3_distribution" {
   statement {
-    actions = ["S3:GetObject"]
-    sid    = "AllowCloudFrontServicePrincipalReadOnly"
+    actions = ["S3:GetObject","s3:GetObjectVersion"]
+    sid    = "Allow only GET requests originating from CloudFront with specific Referer header"
     effect = "Allow"
     principals {
-      type        = "Service"
-      identifiers = ["cloudfront.amazonaws.com"]
+      type        = "*"
+      identifiers = ["*"]
     }
     resources = [
       "${var.main_website_bucket_arn}/*",
     ]
 
     condition {
-      test     = "StringEquals"
-      variable = "AWS:SourceArn"
+      test     = "StringLike"
+      variable = "aws:Referer"
 
       values = [
-        "${aws_cloudfront_distribution.s3_distribution.arn}"
+        #"${aws_cloudfront_distribution.s3_distribution.origin.custom_header.value}"
+        "${var.referer_custom_header}"
       ]
     }
   }

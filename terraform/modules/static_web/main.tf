@@ -29,8 +29,8 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "main_static_websi
 resource "aws_s3_bucket_public_access_block" "main_static_website" {
   bucket = aws_s3_bucket.main_static_website.id
 
-  block_public_acls       = false
-  ignore_public_acls      = false
+  block_public_acls       = true
+  ignore_public_acls      = true
   block_public_policy     = false
   restrict_public_buckets = false
 }
@@ -51,7 +51,7 @@ resource "aws_s3_bucket_acl" "main_static_website" {
   ]
 
   bucket = aws_s3_bucket.main_static_website.id
-  acl    = "public-read"
+  acl    = "private"
 }
 
 resource "aws_s3_bucket_website_configuration" "main_static_website" {
@@ -73,7 +73,7 @@ resource "aws_s3_object" "website_files" {
   bucket       = aws_s3_bucket.main_static_website.bucket
   key          = replace(each.value, var.website_resource_source_directory, "")
   source       = "${var.website_resource_source_directory}${each.value}"
-  acl          = "public-read"
+  #acl          = "public-read"
   etag         = filemd5("${var.website_resource_source_directory}${each.value}")
   content_type = lookup(local.mime_types, split(".", each.value)[length(split(".", each.value)) - 1])
 }
@@ -122,8 +122,8 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "subdomain_www_sta
 resource "aws_s3_bucket_public_access_block" "subdomain_www_static_website" {
   bucket = aws_s3_bucket.subdomain_www_static_website.id
 
-  block_public_acls       = false
-  ignore_public_acls      = false
+  block_public_acls       = true
+  ignore_public_acls      = true
   block_public_policy     = false
   restrict_public_buckets = false
 }

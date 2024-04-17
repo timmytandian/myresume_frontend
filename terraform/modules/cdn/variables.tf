@@ -28,6 +28,11 @@ variable "main_website_bucket_id" {
   type = string
 }
 
+variable "referer_custom_header" {
+  description = "The referer custom header to make sure that S3 is only accessible from CDN."
+  type = string
+}
+
 variable "env" {
   description = "The name of environment (dev/prod) to apply."
   type        = string
