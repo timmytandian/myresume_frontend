@@ -28,5 +28,6 @@ module "cdn" {
   main_website_endpoint             = module.static_web.main_static_website_endpoint
   main_website_bucket_arn           = module.static_web.main_static_website_bucket_arn
   main_website_bucket_id            = module.static_web.main_static_website_bucket_id
+  referer_custom_header             = "aBrAk4D4bR4"
   env                               = local.env
 }
