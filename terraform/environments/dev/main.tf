@@ -4,6 +4,20 @@ locals {
 
 provider "aws" {
   region = "ap-northeast-1"
+  alias = "ap-northeast-1"
+
+  default_tags {
+    tags = {
+      environment = local.env
+      project = "myresume_frontend"
+      managedBy = "terraform"
+    }
+  }
+}
+
+provider "aws" {
+  region = "us-east-1"
+  alias = "us-east-1"
 
   default_tags {
     tags = {
@@ -20,6 +34,10 @@ module "static_web" {
   website_resource_source_directory = "../../../src/"
   referer_custom_header             = var.secret_referer_custom_header
   env                               = local.env
+
+  providers = {
+    aws = aws.ap-northeast-1
+  }
 }
 
 module "cdn" {
