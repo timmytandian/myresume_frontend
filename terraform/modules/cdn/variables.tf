@@ -18,16 +18,6 @@ variable "website_bucket_name" {
   type        = string
 }
 
-variable "main_website_bucket_arn" {
-  description = "The arn of main s3 bucket."
-  type = string
-}
-
-variable "main_website_bucket_id" {
-  description = "The id of main s3 bucket."
-  type = string
-}
-
 variable "referer_custom_header" {
   description = "The referer custom header to make sure that S3 is only accessible from CDN. This value is considered as sensitive."
   type = string

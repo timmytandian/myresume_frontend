@@ -2,7 +2,6 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
   origin {
     domain_name = var.main_website_endpoint
     origin_id   = "origin-${var.website_bucket_name}"
-    #origin_access_control_id = aws_cloudfront_origin_access_control.s3_distribution.id
     custom_origin_config {
       http_port = "80"
       https_port = "443"
@@ -49,6 +48,7 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
   }
 }
 
+/*
 resource "aws_cloudfront_origin_access_control" "s3_distribution" {
   name                              = "OAC for ${var.website_bucket_name}"
   description                       = "Origin access control for the ${var.website_bucket_name}, made with Terraform."
@@ -56,33 +56,5 @@ resource "aws_cloudfront_origin_access_control" "s3_distribution" {
   signing_behavior                  = "always"
   signing_protocol                  = "sigv4"
 }
+*/
 
-data "aws_iam_policy_document" "s3_distribution" {
-  statement {
-    actions = ["S3:GetObject","s3:GetObjectVersion"]
-    sid    = "Allow only GET requests originating from CloudFront with specific Referer header"
-    effect = "Allow"
-    principals {
-      type        = "*"
-      identifiers = ["*"]
-    }
-    resources = [
-      "${var.main_website_bucket_arn}/*",
-    ]
-
-    condition {
-      test     = "StringLike"
-      variable = "aws:Referer"
-
-      values = [
-        #"${aws_cloudfront_distribution.s3_distribution.origin.custom_header.value}"
-        "${var.referer_custom_header}"
-      ]
-    }
-  }
-}
-
-resource "aws_s3_bucket_policy" "s3_distribution" {
-  bucket = var.main_website_bucket_id
-  policy = data.aws_iam_policy_document.s3_distribution.json
-}
