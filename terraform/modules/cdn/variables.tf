@@ -29,8 +29,9 @@ variable "main_website_bucket_id" {
 }
 
 variable "referer_custom_header" {
-  description = "The referer custom header to make sure that S3 is only accessible from CDN."
+  description = "The referer custom header to make sure that S3 is only accessible from CDN. This value is considered as sensitive."
   type = string
+  sensitive = true
 }
 
 variable "env" {

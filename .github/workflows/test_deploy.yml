@@ -136,6 +136,18 @@ jobs:
           fi
 
       #----------------------------------------------
+      #  Prepare secret.tfvars file
+      #----------------------------------------------
+      - name: generate secret.tfvars
+        id: generate_secret_tfvars
+        run: |
+          cd environments/${{ github.ref_name }}
+          echo "generating secret.tfvars"
+          touch secret.tfvars
+          printf 'secret_referer_custom_header = "%s"\n' $TF_SECRET_REFERER_CUSTOM_HEADER >> secret.tfvars
+          cd ../../
+
+      #----------------------------------------------
       #  Terraform Plan
       #----------------------------------------------
       - name: Terraform Validate
@@ -147,7 +159,7 @@ jobs:
         run: |
           if [ -d "environments/${{ github.ref_name }}/" ]; then
             cd environments/${{ github.ref_name }}
-            terraform init
+            terraform plan -var-file="secret.tfvars"
           else
             for dir in environments/*/
             do 
@@ -155,10 +167,10 @@ jobs:
               env=${dir%*/}
               env=${env#*/}
               echo ""
-              echo "*************** TERRAFORM INIT ******************"
-              echo "***** Running terraform init at environment: ${env} *****"
+              echo "*************** TERRAFORM PLAN ******************"
+              echo "***** Running terraform plan at environment: ${env} *****"
               echo "*************************************************"
-              terraform init || exit 1
+              terraform plan -var-file="secret.tfvars" || exit 1
               cd ../../
             done
           fi
@@ -211,7 +223,7 @@ jobs:
         run: |
           if [ -d "environments/${{ github.ref_name }}/" ]; then
             cd environments/${{ github.ref_name }}
-            terraform apply -auto-approve
+            terraform apply -var-file="secret.tfvars" -auto-approve
           else
             echo "***************************** SKIPPING APPLYING *******************************"
             echo "Branch '${{ github.ref_name }}' does not represent an oficial environment." Skip the deployment.
