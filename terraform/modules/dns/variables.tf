@@ -8,13 +8,23 @@ variable "hosted_zone_name" {
   type        = string
 }
 
-variable "certificate_domain" {
-  description = "The certificate domain name."
+variable "main_domain" {
+  description = "The main domain name to be registered as A record in Route 53. E.g. dev.timmytandian.com"
   type = string
 }
 
-variable "sub_domain" {
-  description = "The sub domain name to be registered as A record in Route 53."
+variable "www_domain" {
+  description = "The www sub domain name to be registered as A record in Route 53. E.g. www.dev.timmytandian.com"
+  type = string
+}
+
+variable "cdn_hosted_zone_id" {
+  description = "CloudFront Route 53 zone ID that can be used to route an Alias Resource Record Set to."
+  type = string
+}
+
+variable "cdn_domain_name" {
+  description = "Domain name corresponding to the distribution. For example: d604721fxaaqy9.cloudfront.net."
   type = string
 }
 

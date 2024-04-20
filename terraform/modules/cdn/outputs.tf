@@ -20,5 +20,5 @@ output "cdn_last_modified_time" {
 
 output "cdn_hosted_zone_id" {
   value       = aws_cloudfront_distribution.s3_distribution.hosted_zone_id
-  description = "CloudFront Route 53 zone ID that can be used to route an Alias Resource Record Set to."
+  description = "CloudFront Route 53 zone ID that can be used to route an Alias Resource Record Set to. For example: Z2FDTNDATAQYW2."
 }

@@ -1,7 +1,7 @@
 resource "aws_cloudfront_distribution" "s3_distribution" {
   origin {
     domain_name = var.main_website_endpoint
-    origin_id   = "origin-${var.website_bucket_name}"
+    origin_id   = "origin-${var.website_bucket_name_main}"
     custom_origin_config {
       http_port = "80"
       https_port = "443"
@@ -17,7 +17,7 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
   default_cache_behavior {
     allowed_methods  = ["GET", "HEAD"]
     cached_methods   = ["GET", "HEAD"]
-    target_origin_id = "origin-${var.website_bucket_name}"
+    target_origin_id = "origin-${var.website_bucket_name_main}"
     forwarded_values {
       query_string = false
       cookies {
@@ -27,18 +27,18 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
     viewer_protocol_policy = "redirect-to-https"
   }
 
+  aliases = [var.website_bucket_name_main, var.website_bucket_name_www]
   comment = "My cloud resume CDN for ${var.env} environment. Managed from Terraform."
   price_class = "PriceClass_100"
   enabled             = true
   is_ipv6_enabled     = false
   default_root_object = "index.html"
-  #aliases = ["${local.sub_domain}.${data.aws_route53_zone.zone.name}"]
 
   viewer_certificate {
-    cloudfront_default_certificate = true
-    #acm_certificate_arn            = data.aws_acm_certificate.certificate.arn    
-    #minimum_protocol_version       = "TLSv1.2_2021"
-    #ssl_support_method             = "sni-only"
+    cloudfront_default_certificate = false
+    acm_certificate_arn            = var.certificate_arn
+    minimum_protocol_version       = "TLSv1.2_2021"
+    ssl_support_method             = "sni-only"
   }
 
   restrictions {
@@ -47,14 +47,3 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
     }
   }
 }
-
-/*
-resource "aws_cloudfront_origin_access_control" "s3_distribution" {
-  name                              = "OAC for ${var.website_bucket_name}"
-  description                       = "Origin access control for the ${var.website_bucket_name}, made with Terraform."
-  origin_access_control_origin_type = "s3"
-  signing_behavior                  = "always"
-  signing_protocol                  = "sigv4"
-}
-*/
-

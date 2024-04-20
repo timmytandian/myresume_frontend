@@ -13,8 +13,13 @@ variable "main_website_endpoint" {
   type = string
 }
 
-variable "website_bucket_name" {
-  description = "The bucket name for the website. This is also become the website name."
+variable "website_bucket_name_main" {
+  description = "The website's main bucket name. For example: timmytandian.com."
+  type        = string
+}
+
+variable "website_bucket_name_www" {
+  description = "The website's www bucket name. For example: www.timmytandian.com."
   type        = string
 }
 
@@ -22,6 +27,11 @@ variable "referer_custom_header" {
   description = "The referer custom header to make sure that S3 is only accessible from CDN. This value is considered as sensitive."
   type = string
   sensitive = true
+}
+
+variable "certificate_arn" {
+  description = "the ARN of the SSL certificate to be linked with the CDN."
+  type = string
 }
 
 variable "env" {
