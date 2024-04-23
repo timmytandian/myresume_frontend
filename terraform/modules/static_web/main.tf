@@ -33,7 +33,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "main_static_websi
 resource "aws_s3_bucket_public_access_block" "main_static_website" {
   bucket = aws_s3_bucket.main_static_website.id
 
-  block_public_acls       = true
+  block_public_acls       = false
   ignore_public_acls      = true
   block_public_policy     = false
   restrict_public_buckets = false
@@ -87,20 +87,6 @@ data "aws_iam_policy_document" "main_static_website" {
         "${var.referer_custom_header}"
       ]
     }
-  }
-
-  statement {
-    actions = ["s3:PutObject","s3:PutObjectAcl","s3:GetObject","s3:GetObjectAcl","s3:DeleteObject"]
-    sid    = "Allow PutObject or DeleteObject when using API or terraform"
-    effect = "Allow"
-    principals {
-      type        = "*"
-      identifiers = ["*"]
-    }
-    resources = [
-      "${aws_s3_bucket.main_static_website.arn}",
-      "${aws_s3_bucket.main_static_website.arn}/*",
-    ]
   }
 }
 
