@@ -30,8 +30,19 @@ variable "referer_custom_header" {
 }
 
 variable "certificate_arn" {
-  description = "the ARN of the SSL certificate to be linked with the CDN."
+  description = "The ARN of the SSL certificate to be linked with the CDN."
   type = string
+}
+
+variable "lambda_edge_input_file" {
+  description = "The input file path that will be zipped as lambda package."
+  type = string
+}
+
+variable "lambda_edge_iam_role" {
+  description = "Friendly name of IAM role to be assumed by Lambda Edge."
+  type = string
+  default = "LambdaEdge_CloudFrontSecurityHeader_ExecutionRole"
 }
 
 variable "env" {

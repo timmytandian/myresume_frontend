@@ -43,7 +43,12 @@ module "cdn" {
   main_website_endpoint             = module.static_web.main_static_website_endpoint
   referer_custom_header             = var.secret_referer_custom_header
   certificate_arn                   = module.dns.certificate_arn
+  lambda_edge_input_file            = "./lambda_edge/index.js" 
   env                               = local.env
+
+  providers = {
+    aws = aws.us-east-1
+  }
 }
 
 module "dns" {

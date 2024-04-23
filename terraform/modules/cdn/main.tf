@@ -25,6 +25,11 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
       }
     }
     viewer_protocol_policy = "redirect-to-https"
+    lambda_function_association {
+      event_type   = "origin-response"
+      lambda_arn   = aws_lambda_function.lambda_edge.qualified_arn
+      include_body = false
+    }
   }
 
   aliases = [var.website_bucket_name_main, var.website_bucket_name_www]
