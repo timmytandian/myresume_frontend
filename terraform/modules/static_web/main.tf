@@ -68,7 +68,7 @@ resource "aws_s3_bucket_website_configuration" "main_static_website" {
 
 data "aws_iam_policy_document" "main_static_website" {
   statement {
-    actions = ["S3:GetObject","s3:GetObjectVersion"]
+    actions = ["s3:GetObject","s3:GetObjectVersion"]
     sid    = "Allow only GET requests originating from CloudFront with specific Referer header"
     effect = "Allow"
     principals {
@@ -87,6 +87,20 @@ data "aws_iam_policy_document" "main_static_website" {
         "${var.referer_custom_header}"
       ]
     }
+  }
+
+  statement {
+    actions = ["s3:PutObject","s3:PutObjectAcl","s3:GetObject","s3:GetObjectAcl","s3:DeleteObject"]
+    sid    = "Allow PutObject or DeleteObject when using API or terraform"
+    effect = "Allow"
+    principals {
+      type        = "*"
+      identifiers = ["*"]
+    }
+    resources = [
+      "${aws_s3_bucket.main_static_website.arn}",
+      "${aws_s3_bucket.main_static_website.arn}/*",
+    ]
   }
 }
 
