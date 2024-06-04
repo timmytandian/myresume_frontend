@@ -80,7 +80,7 @@ data "aws_iam_policy_document" "main_static_website" {
     ]
 
     condition {
-      test     = "StringNotLike" # should be "StringLike"
+      test     = "StringLike" # should be "StringLike"
       variable = "aws:Referer"
 
       values = [
