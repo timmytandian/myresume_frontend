@@ -1,4 +1,4 @@
-data "archive_file" "lambda_edge" {
+/*data "archive_file" "lambda_edge" {
   type        = "zip"
   output_path = "/tmp/myresume_frontend/lambda_edge.zip"
   source_file = var.lambda_edge_input_file
@@ -22,3 +22,4 @@ data "aws_iam_role" "lambda_edge" {
   name = var.lambda_edge_iam_role
   provider = aws.use1
 }
+*/
