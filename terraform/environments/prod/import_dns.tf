@@ -4,6 +4,7 @@
 ###################################################
 # SSL certificate and DNS record for its validation
 ###################################################
+/*
 import {
   to = module.dns.aws_acm_certificate.ssl_certificate
   id = "arn:aws:acm:us-east-1:966337238076:certificate/fb067fc4-a154-4884-adfa-059bb686ab7b" # the ID of the resource in the source platform
@@ -50,4 +51,4 @@ import {
 import {
   to = module.dns.aws_route53_record.www
   id = format("%s_%s_%s", "Z09296125XCW1X0VJESI", "www.timmytandian.com", "A")
-}
+}*/
