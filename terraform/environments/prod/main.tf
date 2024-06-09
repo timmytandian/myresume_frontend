@@ -34,7 +34,7 @@ module "static_web" {
   referer_custom_header             = var.secret_referer_custom_header
   env                               = local.env
 }
-/*
+
 module "cdn" {
   source                            = "../../modules/cdn"
   bucket_regional_domain_name       = module.static_web.main_static_website_regional_domain_name
@@ -47,11 +47,12 @@ module "cdn" {
   env                               = local.env
 
   providers = {
-    aws = aws.us-east-1
+    aws.apne1 = aws
+    aws.use1  = aws.us-east-1
   }
 }
-*/
-/*
+
+
 module "dns" {
   source                            = "../../modules/dns"
   hosted_zone_name                  = "timmytandian.com"
@@ -65,4 +66,3 @@ module "dns" {
     aws = aws.us-east-1
   }
 }
-*/
