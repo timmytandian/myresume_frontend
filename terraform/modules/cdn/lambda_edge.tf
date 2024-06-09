@@ -15,8 +15,10 @@ resource "aws_lambda_function" "lambda_edge" {
   role    = "${data.aws_iam_role.lambda_edge.arn}"
 
   publish  = true
+  provider = aws.use1
 }
 
 data "aws_iam_role" "lambda_edge" {
   name = var.lambda_edge_iam_role
+  provider = aws.use1
 }
