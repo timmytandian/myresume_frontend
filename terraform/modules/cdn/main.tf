@@ -1,7 +1,8 @@
 resource "aws_cloudfront_distribution" "s3_distribution" {
   origin {
     domain_name = var.main_website_endpoint
-    origin_id   = "origin-${var.website_bucket_name_main}"
+    //origin_id   = "origin-${var.website_bucket_name_main}"
+    origin_id   = var.main_website_endpoint
     custom_origin_config {
       http_port = "80"
       https_port = "443"
@@ -17,7 +18,7 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
   default_cache_behavior {
     allowed_methods        = ["GET", "HEAD"]
     cached_methods         = ["GET", "HEAD"]
-    target_origin_id       = "origin-${var.website_bucket_name_main}"
+    target_origin_id       = var.main_website_endpoint
     viewer_protocol_policy = "redirect-to-https"
     cache_policy_id        = data.aws_cloudfront_cache_policy.s3_distribution.id
     compress               = true 
@@ -45,7 +46,7 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
   }
 
   logging_config {
-    bucket          = data.aws_s3_bucket.s3_distribution_logs.id
+    bucket          = data.aws_s3_bucket.s3_distribution_logs.bucket_domain_name
     prefix          = "cdn_logs/"
     include_cookies = false
   }
