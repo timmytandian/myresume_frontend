@@ -39,72 +39,16 @@ import {
 	id = "timmytandian.com" # the ID of the resource in the source platform
 }
 
-/*
-data "aws_iam_policy_document" "main_static_website" {
-  statement {
-    actions = ["s3:GetObject","s3:GetObjectVersion"]
-    sid    = "Allow only GET requests originating from CloudFront with specific Referer header"
-    effect = "Allow"
-    principals {
-      type        = "*"
-      identifiers = ["*"]
-    }
-    resources = [
-      "${aws_s3_bucket.main_static_website.arn}/*",
-    ]
-
-    condition {
-      test     = "StringNotLike" # should be "StringLike"
-      variable = "aws:Referer"
-
-      values = [
-        "${var.referer_custom_header}"
-      ]
-    }
-  }
-}*/
-
 import {
 	to = module.static_web.aws_s3_bucket_policy.main_static_website
 	id = "timmytandian.com" # the ID of the resource in the source platform
 }
-/*
-locals {
-  bucket_keys = [
-    {
-        obj = "timmytandian.com/css/styles.css"
-    },
-    {
-        obj = "timmytandian.com/images/aws-certified-cloud-practitioner.png"
-    },
-    {
-        obj = "timmytandian.com/images/aws-certified-solutions-architect-associate.png"
-    },
-    {
-        obj = "timmytandian.com/images/favicon.ico"
-    },
-    {
-        obj = "timmytandian.com/images/profpic.jpg"
-    },
-    {
-        obj = "timmytandian.com/index.html"
-    },
-    {
-        obj = "timmytandian.com/js/index.js"
-    },
-  ]
-}
 
 import {
-	for_each = local.bucket_keys
-    to = module.static_web.aws_s3_object.website_files.this[each.value.obj]
-	id = each.value.obj
-}*/
-/*
-import {
-	to = module.static_web.aws_s3_object.website_files["timmytandian.com/css/styles.css"]
-	id = "timmytandian.com/css/styles.css"
-}*/
+	for_each = fileset("../../../src/", "**/*.*")
+  to = module.static_web.aws_s3_object.website_files[each.key]
+	id = format("%s/%s","timmytandian.com",each.value)
+}
 
 ###################################################
 # Bucket: subdomain_www_static_website
