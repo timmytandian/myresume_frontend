@@ -22,11 +22,11 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
     viewer_protocol_policy = "redirect-to-https"
     cache_policy_id        = data.aws_cloudfront_cache_policy.s3_distribution.id
     compress               = true 
-    /*lambda_function_association {
+    lambda_function_association {
       event_type   = "origin-response"
       lambda_arn   = aws_lambda_function.lambda_edge.qualified_arn
       include_body = false
-    }*/
+    }
   }
 
   aliases             = [var.website_bucket_name_main, var.website_bucket_name_www]
