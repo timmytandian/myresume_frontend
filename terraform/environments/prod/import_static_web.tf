@@ -1,9 +1,10 @@
 # Use the block below to import the resource from AWS
+# IMPORTANT: after the import procedure finished, the code below are commented out.
 
 ###################################################
 # Bucket: main_static_website
 ###################################################
-
+/*
 import {
 	to = module.static_web.aws_s3_bucket.main_static_website
 	id = "timmytandian.com" # the ID of the resource in the source platform
@@ -43,17 +44,18 @@ import {
 	to = module.static_web.aws_s3_bucket_policy.main_static_website
 	id = "timmytandian.com" # the ID of the resource in the source platform
 }
+*/
 
-import {
-	for_each = fileset("../../../src/", "**/*.*")
-  to = module.static_web.aws_s3_object.website_files[each.key]
-	id = format("%s/%s","timmytandian.com",each.value)
-}
+//import {
+//	for_each = fileset("../../../src/", "**/*.*")
+//  to = module.static_web.aws_s3_object.website_files[each.key]
+//	id = format("%s/%s","timmytandian.com",each.value)
+//}
 
 ###################################################
 # Bucket: subdomain_www_static_website
 ###################################################
-
+/*
 import {
 	to = module.static_web.aws_s3_bucket.subdomain_www_static_website
 	id = "www.timmytandian.com" # the ID of the resource in the source platform
@@ -83,3 +85,4 @@ import {
 	to = module.static_web.aws_s3_bucket_website_configuration.subdomain_www_static_website
 	id = "www.timmytandian.com" # the ID of the resource in the source platform
 }
+*/
