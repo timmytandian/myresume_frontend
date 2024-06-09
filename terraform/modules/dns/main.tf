@@ -7,7 +7,8 @@ data "aws_route53_zone" "zone" {
 # SSL certificate and DNS record for its validation
 resource "aws_acm_certificate" "ssl_certificate" {
   domain_name               = var.hosted_zone_name
-  subject_alternative_names = ["${var.main_domain}", "${var.www_domain}"]
+  //subject_alternative_names = ["${var.main_domain}", "${var.www_domain}"]
+  subject_alternative_names = ["${var.main_domain}", format("%s%s","*.","${var.main_domain}")]
   validation_method = "DNS"
   key_algorithm = "EC_prime256v1"
 
