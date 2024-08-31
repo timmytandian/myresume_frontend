@@ -2,6 +2,7 @@ locals {
   env = "prod"
 }
 
+# default provider; provides ap-northeast-1 resource
 provider "aws" {
   region = "ap-northeast-1"
   
@@ -14,6 +15,7 @@ provider "aws" {
   }
 }
 
+# provides us-east-1 resource (for CDN, SSL cert)
 provider "aws" {
   region = "us-east-1"
   alias = "us-east-1"
