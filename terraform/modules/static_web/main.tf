@@ -106,7 +106,6 @@ resource "aws_s3_object" "website_files" {
   bucket       = aws_s3_bucket.main_static_website.bucket
   key          = replace(each.value, var.website_resource_source_directory, "")
   source       = "${var.website_resource_source_directory}${each.value}"
-  #acl          = "public-read"
   etag         = filemd5("${var.website_resource_source_directory}${each.value}")
   content_type = lookup(local.mime_types, split(".", each.value)[length(split(".", each.value)) - 1])
 }
