@@ -3,7 +3,7 @@ run-name: ACTOR ${{ github.actor }} - BRANCH ${{ github.ref_name }} - EVENT ${{ 
 on: 
   workflow_dispatch:
   push:
-    branches: [prod, dev, prod_pr_workflow]
+    branches: [prod, dev]
   pull_request:
     types: [opened]
 permissions:
@@ -187,7 +187,7 @@ jobs:
       #  Github script to to post issue in PR window
       #----------------------------------------------
       - uses: actions/github-script@v6
-        if: github.event_name == 'push'
+        if: github.event_name == 'pull_request'
         env:
           VALIDATE: ${{ steps.tf_validate.outputs.tf_validate_output }}
           PLAN: "${{ steps.tf_plan.outputs.tf_plan_output }}"
