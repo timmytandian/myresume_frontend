@@ -1,6 +1,6 @@
 name: frontend CI/CD
 run-name: ACTOR ${{ github.actor }} - BRANCH ${{ github.ref_name }} - EVENT ${{ github.event_name }}
-on: [workflow_dispatch, push]
+on: [workflow_dispatch, push, pull_request]
 jobs:
   Test-and-Build:
     runs-on: ubuntu-latest
@@ -118,23 +118,14 @@ jobs:
       - name: tf init
         id: tf_init
         run: |
-          if [ -d "environments/${{ github.ref_name }}/" ]; then
+          if [ "${{ github.event_name }}" == "push" ]; then
             cd environments/${{ github.ref_name }}
-            terraform init
-          else
-            for dir in environments/*/
-            do 
-              cd ${dir}   
-              env=${dir%*/}
-              env=${env#*/}
-              echo ""
-              echo "*************** TERRAFORM INIT ******************"
-              echo "***** Running terraform init at environment: ${env} *****"
-              echo "*************************************************"
-              terraform init || exit 1
-              cd ../../
-            done
+          elif [ "${{ github.event_name }}" == "pull_request" ]; then
+            cd environments/${{ github.base_ref }} # target branch when merging the pull request
           fi
+          
+          terraform init
+          cd ../../
 
       #----------------------------------------------
       #  Prepare secret.tfvars file
@@ -142,7 +133,12 @@ jobs:
       - name: generate secret.tfvars
         id: generate_secret_tfvars
         run: |
-          cd environments/${{ github.ref_name }}
+          if [ "${{ github.event_name }}" == "push" ]; then
+            cd environments/${{ github.ref_name }}
+          elif [ "${{ github.event_name }}" == "pull_request" ]; then
+            cd environments/${{ github.base_ref }} # target branch when merging the pull request
+          fi
+        
           echo "generating secret.tfvars"
           touch secret.tfvars
           printf 'secret_referer_custom_header = "%s"\n' $TF_SECRET_REFERER_CUSTOM_HEADER >> secret.tfvars
@@ -158,23 +154,14 @@ jobs:
       - name: tf plan
         id: tf_plan
         run: |
-          if [ -d "environments/${{ github.ref_name }}/" ]; then
+          if [ "${{ github.event_name }}" == "push" ]; then
             cd environments/${{ github.ref_name }}
-            terraform plan -var-file="secret.tfvars"
-          else
-            for dir in environments/*/
-            do 
-              cd ${dir}   
-              env=${dir%*/}
-              env=${env#*/}
-              echo ""
-              echo "*************** TERRAFORM PLAN ******************"
-              echo "***** Running terraform plan at environment: ${env} *****"
-              echo "*************************************************"
-              terraform plan -var-file="secret.tfvars" || exit 1
-              cd ../../
-            done
+          elif [ "${{ github.event_name }}" == "pull_request" ]; then
+            cd environments/${{ github.base_ref }} # target branch when merging the pull request
           fi
+        
+          terraform plan -var-file="secret.tfvars"
+          cd ../../
 
       #----------------------------------------------
       #  Github script to to post issue in PR window
@@ -222,14 +209,13 @@ jobs:
       - name: Terraform Apply
         id: tf_apply
         run: |
-          if [ -d "environments/${{ github.ref_name }}/" ]; then
+          if [ "${{ github.event_name }}" == "push" ]; then
             cd environments/${{ github.ref_name }}
-            terraform apply -var-file="secret.tfvars" -auto-approve
-          else
-            echo "***************************** SKIPPING APPLYING *******************************"
-            echo "Branch '${{ github.ref_name }}' does not represent an oficial environment." Skip the deployment.
-            echo "*******************************************************************************"
+          elif [ "${{ github.event_name }}" == "pull_request" ]; then
+            cd environments/${{ github.base_ref }} # target branch when merging the pull request
           fi
+        
+          terraform apply -var-file="secret.tfvars" -auto-approve
   
   DeployCodeToS3:
     if: github.repository == 'timmytandian/remove-me-to-execute-this-job'
