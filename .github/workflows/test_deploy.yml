@@ -1,6 +1,15 @@
 name: frontend CI/CD
 run-name: ACTOR ${{ github.actor }} - BRANCH ${{ github.ref_name }} - EVENT ${{ github.event_name }}
-on: [workflow_dispatch, push]
+on: 
+  workflow_dispatch:
+  push:
+    branches: [prod, dev]
+  pull_request:
+    types: [opened, synchronize]
+permissions:
+  pull-requests: write
+  issues: write
+
 jobs:
   Test-and-Build:
     runs-on: ubuntu-latest
@@ -50,7 +59,7 @@ jobs:
             ${{ runner.os }}-build-
             ${{ runner.os }}-
       #----------------------------------------------
-      # List state of Node modules if cache misses
+      # List sate of Node modules if cache misses
       #----------------------------------------------
       - if: ${{ steps.cache-npm.outputs.cache-hit != 'true' }}
         name: List the state of node modules
@@ -118,23 +127,14 @@ jobs:
       - name: tf init
         id: tf_init
         run: |
-          if [ -d "environments/${{ github.ref_name }}/" ]; then
+          if [ "${{ github.event_name }}" == "push" ]; then
             cd environments/${{ github.ref_name }}
-            terraform init
-          else
-            for dir in environments/*/
-            do 
-              cd ${dir}   
-              env=${dir%*/}
-              env=${env#*/}
-              echo ""
-              echo "*************** TERRAFORM INIT ******************"
-              echo "***** Running terraform init at environment: ${env} *****"
-              echo "*************************************************"
-              terraform init || exit 1
-              cd ../../
-            done
+          elif [ "${{ github.event_name }}" == "pull_request" ]; then
+            cd environments/${{ github.base_ref }} # target branch when merging the pull request
           fi
+          
+          terraform init
+          cd ../../
 
       #----------------------------------------------
       #  Prepare secret.tfvars file
@@ -142,7 +142,12 @@ jobs:
       - name: generate secret.tfvars
         id: generate_secret_tfvars
         run: |
-          cd environments/${{ github.ref_name }}
+          if [ "${{ github.event_name }}" == "push" ]; then
+            cd environments/${{ github.ref_name }}
+          elif [ "${{ github.event_name }}" == "pull_request" ]; then
+            cd environments/${{ github.base_ref }} # target branch when merging the pull request
+          fi
+        
           echo "generating secret.tfvars"
           touch secret.tfvars
           printf 'secret_referer_custom_header = "%s"\n' $TF_SECRET_REFERER_CUSTOM_HEADER >> secret.tfvars
@@ -153,28 +158,30 @@ jobs:
       #----------------------------------------------
       - name: Terraform Validate
         id: tf_validate
-        run: terraform validate -no-color
+        run: |
+          # Capture validate output to a file
+          terraform validate -no-color 2>&1 | tee validate.txt
+          # Save the validate output to step outputs
+          echo "tf_validate_output<<EOF" >> $GITHUB_OUTPUT
+          cat validate.txt >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
 
       - name: tf plan
         id: tf_plan
         run: |
-          if [ -d "environments/${{ github.ref_name }}/" ]; then
+          if [ "${{ github.event_name }}" == "push" ]; then
             cd environments/${{ github.ref_name }}
-            terraform plan -var-file="secret.tfvars"
-          else
-            for dir in environments/*/
-            do 
-              cd ${dir}   
-              env=${dir%*/}
-              env=${env#*/}
-              echo ""
-              echo "*************** TERRAFORM PLAN ******************"
-              echo "***** Running terraform plan at environment: ${env} *****"
-              echo "*************************************************"
-              terraform plan -var-file="secret.tfvars" || exit 1
-              cd ../../
-            done
+          elif [ "${{ github.event_name }}" == "pull_request" ]; then
+            cd environments/${{ github.base_ref }} # target branch when merging the pull request
           fi
+        
+          # Capture the plan output to a file
+          terraform plan -no-color -var-file="secret.tfvars" 2>&1 | tee plan.txt
+          # Save the plan output to step outputs
+          echo "tf_plan_output<<EOF" >> $GITHUB_OUTPUT
+          cat plan.txt >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+          cd ../../
 
       #----------------------------------------------
       #  Github script to to post issue in PR window
@@ -182,7 +189,8 @@ jobs:
       - uses: actions/github-script@v6
         if: github.event_name == 'pull_request'
         env:
-          PLAN: "terraform\n${{ steps.tf_plan.outputs.stdout }}"
+          VALIDATE: ${{ steps.tf_validate.outputs.tf_validate_output }}
+          PLAN: "${{ steps.tf_plan.outputs.tf_plan_output }}"
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
@@ -192,7 +200,7 @@ jobs:
             <details><summary>Validation Output</summary>
       
             \`\`\`\n
-            ${{ steps.tf_validate.outputs.stdout }}
+            ${process.env.VALIDATE}
             \`\`\`
       
             </details>
@@ -222,15 +230,15 @@ jobs:
       - name: Terraform Apply
         id: tf_apply
         run: |
-          if [ -d "environments/${{ github.ref_name }}/" ]; then
+          if [ "${{ github.event_name }}" == "push" ]; then
             cd environments/${{ github.ref_name }}
             terraform apply -var-file="secret.tfvars" -auto-approve
-          else
+          elif [ "${{ github.event_name }}" == "pull_request" ]; then
             echo "***************************** SKIPPING APPLYING *******************************"
-            echo "Branch '${{ github.ref_name }}' does not represent an oficial environment." Skip the deployment.
+            echo "Branch '${{ github.head_ref }}' does not represent an oficial environment [dev|prod]." Skip the deployment.
             echo "*******************************************************************************"
           fi
-      
+  
   DeployCodeToS3:
     if: github.repository == 'timmytandian/remove-me-to-execute-this-job'
     runs-on: ubuntu-latest
@@ -251,6 +259,6 @@ jobs:
           aws-region: ap-northeast-1
       - name: Upload web resources to S3
         run: |
-          aws s3 sync . s3://${{ vars.S3_BUCKET }} --delete
+            aws s3 sync . s3://${{ vars.S3_BUCKET }} --delete
       - name: Job status report
         run: echo "🍏 This job's status is ${{ job.status }}."
