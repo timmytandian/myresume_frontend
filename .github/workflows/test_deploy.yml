@@ -3,13 +3,9 @@ run-name: ACTOR ${{ github.actor }} - BRANCH ${{ github.ref_name }} - EVENT ${{ 
 on: 
   workflow_dispatch:
   push:
-    branches:
-      -'prod'
-      -'dev'
+    branches: [prod, dev]
   pull_request:
-    branches:
-      -'prod'
-      -'dev'
+    types: [closed]
 jobs:
   Test-and-Build:
     runs-on: ubuntu-latest
