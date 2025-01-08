@@ -5,7 +5,7 @@ on:
   push:
     branches: [prod, dev]
   pull_request:
-    types: [closed]
+    types: [opened]
 jobs:
   Test-and-Build:
     runs-on: ubuntu-latest
@@ -216,11 +216,12 @@ jobs:
         run: |
           if [ "${{ github.event_name }}" == "push" ]; then
             cd environments/${{ github.ref_name }}
+            terraform apply -var-file="secret.tfvars" -auto-approve
           elif [ "${{ github.event_name }}" == "pull_request" ]; then
-            cd environments/${{ github.base_ref }} # target branch when merging the pull request
+            echo "***************************** SKIPPING APPLYING *******************************"
+            echo "Branch '${{ github.ref_name }}' does not represent an oficial environment [dev|prod]." Skip the deployment.
+            echo "*******************************************************************************"
           fi
-        
-          terraform apply -var-file="secret.tfvars" -auto-approve
   
   DeployCodeToS3:
     if: github.repository == 'timmytandian/remove-me-to-execute-this-job'
