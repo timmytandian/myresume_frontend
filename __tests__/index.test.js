@@ -24,6 +24,6 @@ describe('index.js testing', () => {
 		expect(fetchMock).toHaveBeenCalledTimes(1);
         
         const fetchMockUrl = fetchMock.mock.calls[0][0].href;
-        expect(fetchMockUrl).toBe("https://3ijz5acnoe.execute-api.ap-northeast-1.amazonaws.com/dev/counts/6632d5b4-5655-4c48-b7b6-071d5823c888?func=addOneVisitorCount");
+        expect(fetchMockUrl).toBe("https://3ijz5acnoe.execute-api.ap-northeast-1.amazonaws.com/counts/6632d5b4-5655-4c48-b7b6-071d5823c888?func=addOneVisitorCount");
 	});
 });
