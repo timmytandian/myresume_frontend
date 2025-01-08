@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", updateVisitCounterElmtInnerHtml);
 
 async function getVisitorCount(){
     // define the API endpoint
-    const apiEndpoint = new URL("https://3ijz5acnoe.execute-api.ap-northeast-1.amazonaws.com/dev/counts/6632d5b4-5655-4c48-b7b6-071d5823c888?func=addOneVisitorCount");
+    const apiEndpoint = new URL("https://vo422t3t39.execute-api.ap-northeast-1.amazonaws.com/counts/250808e1-38f9-2c29-90b9-5146319be0c3?func=addOneVisitorCount");
     
     // fetch the data from the database
     try {
