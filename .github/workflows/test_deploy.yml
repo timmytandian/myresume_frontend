@@ -160,7 +160,7 @@ jobs:
         id: tf_validate
         run: |
           # Capture validate output to a file
-          terraform validate -no-color > validate.txt 2>&1
+          terraform validate -no-color 2>&1 | tee validate.txt
           # Save the validate output to step outputs
           echo "tf_validate_output<<EOF" >> $GITHUB_OUTPUT
           cat validate.txt >> $GITHUB_OUTPUT
@@ -176,7 +176,7 @@ jobs:
           fi
         
           # Capture the plan output to a file
-          terraform plan -var-file="secret.tfvars" > plan.txt 2>&1
+          terraform plan -no-color -var-file="secret.tfvars" 2>&1 | tee plan.txt
           # Save the plan output to step outputs
           echo "tf_plan_output<<EOF" >> $GITHUB_OUTPUT
           cat plan.txt >> $GITHUB_OUTPUT
