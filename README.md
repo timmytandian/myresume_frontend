@@ -26,31 +26,31 @@ The Infrastructure as Code is implemented with Terraform.
 ## Directory Structure Overview
 ```
 /myresume_backend
-├── .github
-│   └── workflows
+├── .github/
+│   └── workflows/
 │       └── test_deploy.yml      (Code Content 4-1)
-├── src                          (Code Content 2-1)
-│   ├── css
-│   ├── images
-│   ├── js
+├── src/                         (Code Content 2-1)
+│   ├── css/
+│   ├── images/
+│   ├── js/
 │   └── index.html
-├── terraform
-│   ├── environments
-│   │   ├── dev
+├── terraform/
+│   ├── environments/
+│   │   ├── dev/
 │   │   │   ├── main.tf
 │   │   │   └── ...
-│   │   └── prod
+│   │   └── prod/
 │   │       └── main.tf
 │   │       └── ...
-│   └── modules
-│       ├── cdn                  (Code Content 1-2)
+│   └── modules/
+│       ├── cdn/                 (Code Content 1-2)
 │       │   └── ...
-│       ├── dns                  (Code Content 1-3)
+│       ├── dns/                 (Code Content 1-3)
 │       │   └── ...
-│       └── static_web           (Code Content 1-1)
+│       └── static_web/          (Code Content 1-1)
 │           └── ...
 ├── gulpfile.js                  (Code Content 3-2)
-├── __tests__
+├── __tests__/
 │   └── index.test.js            (Code Content 3-1)
 │
 └── ...(other repo files)
