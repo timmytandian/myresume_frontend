@@ -11457,3 +11457,12 @@ section.resume-section .resume-section-content {
     padding-left: 0;
   }
 }
+
+.tech-table {
+  border-collapse: separate;
+  border-spacing: 1.0rem 0;
+}
+
+.tech-table td:first-child {
+  padding-right: 0.5rem;
+}
