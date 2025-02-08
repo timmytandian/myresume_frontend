@@ -31,7 +31,7 @@ provider "aws" {
 
 module "static_web" {
   source                            = "../../modules/static_web"
-  website_bucket_name               = "timmytandian.com"
+  website_bucket_name               = "resume.timmytandian.com"
   website_resource_source_directory = "../../../src/"
   referer_custom_header             = var.secret_referer_custom_header
   env                               = local.env
