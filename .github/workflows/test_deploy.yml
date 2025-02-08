@@ -236,6 +236,7 @@ jobs:
           elif [ "${{ github.event_name }}" == "pull_request" ]; then
             echo "***************************** SKIPPING APPLYING *******************************"
             echo "Branch '${{ github.head_ref }}' does not represent an oficial environment [dev|prod]." Skip the deployment.
+            echo "Make a pull request to the [dev|prod] branch to deploy."
             echo "*******************************************************************************"
           fi
   
