@@ -133,7 +133,7 @@ jobs:
             cd environments/${{ github.base_ref }} # target branch when merging the pull request
           fi
           
-          terraform init
+          terraform init -upgrade
           cd ../../
 
       #----------------------------------------------
