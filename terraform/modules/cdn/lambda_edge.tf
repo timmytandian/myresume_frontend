@@ -11,7 +11,7 @@ resource "aws_lambda_function" "lambda_edge" {
   source_code_hash = "${data.archive_file.lambda_edge.output_base64sha256}"
 
   handler = "index.handler"
-  runtime = "nodejs20.x"
+  runtime = "nodejs24.x"
   role    = "${data.aws_iam_role.lambda_edge.arn}"
 
   publish  = true
